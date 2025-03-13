@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+
+    <!-- Bootstrap CSS -->
+    
+
+    <!-- JS -->
+    <script   src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+
+        .info ol {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .info ul {
+            margin-bottom: 10px;
+        }
+
+        .info span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .button {
+            margin: 10px 0;
+        }
+
+        .modal-content .box {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .block {
+            margin-top: 20px;
+        }
+
+        .comment_text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .comment_created_at, .comment_updated_at {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .comment_reply, .comment_edit, .comment_delete {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px;
+        }
+
+        .comment_reply:hover, .comment_edit:hover, .comment_delete:hover {
+            background-color: #2980b9;
+        }
+
+        .reply_input {
+            margin-top: 10px;
+        }
+
+        .reply_textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .reply_submit {
+            background-color: #27ae60;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reply_submit:hover {
+            background-color: #2ecc71;
+        }
+
+
+        .reply {
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin-top: 10px;
+        margin-left: 20px; /* 대댓글 들여쓰기 */
+        border-left: 4px solid #3498db;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .reply_text {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .reply_created_at {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .reply_buttons {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .button.is-info.reply_edit {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .button.is-info.reply_edit:hover {
+        background-color: #2980b9;
+    }
+
+    .button.is-danger.reply_delete {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .button.is-danger.reply_delete:hover {
+        background-color: #e74c3c;
+    }
+
+    .edit_reply {
+        background-color: #f5f5f5;
+        padding: 15px;
+        margin-top: 10px;
+        border-left: 4px solid #3498db;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .new_text {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: vertical;
+        margin-bottom: 10px;
+    }
+
+    .new_text::placeholder {
+        color: #999;
+    }
+
+    .button.is-success.edit_reply_save {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 15px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+    .button.is-success.edit_reply_save:hover {
+        background-color: #27ae60;
+    }
+
+    /* 버튼 스타일 */
+    .edit_reply div {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .quantity-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.quantity-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* 입력창과 버튼 사이 여백 */
+}
+
+.quantity-input {
+    width: 60px;
+    height: 40px;
+    font-size: 16px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    padding: 5px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.quantity-input:focus {
+    border-color: #ff3860; /* Bulma danger 색상 */
+}
+
+.buy {
+    background-color: #ff3860;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buy:hover {
+    background-color: #e02d56;
+    transform: scale(1.05);
+}
+
+.buy:active {
+    background-color: #c5284b;
+    transform: scale(0.95);
+}
+
+.box{
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div class="info">
+        <div> <span id="board">게시글 제목: </span> </div>
+        <div> 
+            <ol>     
+                <ul><span class="name">상품명: </span><span id="name">상품명</span></ul>
+                <ul><span>상품 링크: </span><span id="link"></span></ul>
+                <ul><span>상품 가격: </span><span id="price"></span></ul>
+                <ul><span>게시글 마감일: </span><span id="deadline"></span></ul>
+                <ul><span>배송비용: </span><span id="shipping"></span></ul>
+                <ul><span>수량: </span><span id="quantity"></span> 
+                <ul><span>배송비 여부: </span><span id="condition"></span> 
+                <ul><span>카테고리: </span><span id="category"></span></ul>
+            </ol>
+        </div>
+        <button id="edit" class="button is-info">상품 수정</button>
+        
+        <button id="openModal" class="button is-primary">모달 열기</button>
+        <div id="buy_modal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box">
+                    <div>
+                        <h1 class="title">공구 탑승!!!</h1> 
+                        <p>구매할 개수를 선택해주세요!</p> 
+                    </div>
+                    <br>
+                    <input type="number" class="input quantity-input" min="1" max="99" value="1"> <button class="buy"> 참여 희망!! </button>
+                </div>
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
+        </div>
+    </div>
+
+    <div class="block">
+        <textarea id="write_comment" class="reply_textarea" placeholder="댓글을 작성해주세요"></textarea>
+        <button type="submit" onclick="new_comment()" class="button is-success">댓글 전송</button>
+    </div>
+
+    <div id="comments_list"></div>
+
+    <script>
+        
+        $(document).ready(function() {
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4]
+            $.ajax({
+                url: '/find_product/' + post_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if(response.result === "success") {
+                        $('#board').text(response.product.board);
+                        $('#name').text(response.product.name);
+                        $('#link').text(response.product.link);
+                        $('#price').text(response.product.price);
+                        $('#deadline').text(response.product.deadline);
+                        $('#shipping').text(response.product.shipping);
+                        $('#condition').text(response.product.condition);
+                        $('#category').text(response.product.category);
+                        $('#quantity').text(response.product.quantity);
+                    } else {
+                        console.error("상품을 찾을 수 없습니다.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("서버 오류:", error);
+                }
+            });
+            read_comment();
+        });
+
+        // 모달 열기
+        $('#openModal').click(function() {
+            $('#buy_modal').addClass('is-active');
+        });
+
+        // 모달 닫기
+        $('.modal-close').click(function() {
+            $('#buy_modal').removeClass('is-active');
+        });
+
+        // 모달 배경 클릭 시 닫기
+        $('.modal-background').click(function() {
+            $('#buy_modal').removeClass('is-active');
+        });
+
+
+        //모달 구매수량
+        $(document).on("click", ".buy", function () {
+                let params = window.location.href;  // 현재 URL을 가져옴
+                let post_id = params.split("/")[4];
+                let purchase_amount = $(".quantity-input").val();
+                
+                const accessToken = getCookie("access_token");
+
+                $.ajax({
+                type: "POST",
+                url: '/buy_product/' + post_id,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`  // Authorization 헤더 추가
+                },
+                data: { 
+                    "post_id": post_id, 
+                    "purchase_amount": purchase_amount,
+                },
+                success: function (response) { 
+                    if (response["result"] == "success") {
+                        alert("구매 희먕 요청이 발송됐습니다.");
+                        window.location.reload();
+                    } else {
+                        alert("server error");
+                    }
+                }
+            });
+                
+            })
+
+
+        function new_comment() {
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4];
+            let text = document.getElementById("write_comment").value;
+            const accessToken = getCookie("access_token");
+            $.ajax({
+                type: "POST",
+                url: '/new_comment',
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`  // Authorization 헤더 추가
+                },
+                data: { 
+                    "post_id": post_id, 
+                    "text": text,
+                },
+                success: function (response) { 
+                    if (response["result"] == "success") {
+                        alert("댓글이 작성되었습니다.");
+                        window.location.reload();
+                    } else {
+                        alert("server error");
+                    }
+                }
+            });
+        }
+        $(document).on("click", ".comment_edit", function () {
+                let $need_edit_comment = $(this).closest(".comment"); 
+                let edit_id = $need_edit_comment.attr("id");
+                let edit_text = $need_edit_comment.find(".comment_text").text().trim();
+
+                let edited_comment = `
+                <div class="edit_comment" id="${edit_id}">
+                    <textarea class="new_text" placeholder="${edit_text}"></textarea>
+                    <div><button class ="edit_save">저장</button></div>
+                </div>
+                `;
+                
+                $need_edit_comment.replaceWith(edited_comment);
+                
+            })
+        $(document).on('click', '.edit_save', function() {
+            let $edited_comment = $(this).closest(".edit_comment");
+            let edit_id = $edited_comment.attr("id");
+            let edit_text = $edited_comment.find(".new_text").val();
+            
+            $.ajax({
+                    type : "POST",
+                    url : "/update_comment",
+                    data : {"comment_id": edit_id, "update_text" : edit_text},
+                    success : function() {
+                        alert("댓글이 수정정되었습니다다.");
+                        
+                        window.location.reload();
+                    }
+
+   
+                })
+        })    
+
+        $(document).on('click', '.comment_delete', function() {
+            let $delete_comment = $(this).closest(".comment");
+            let comment_id = $delete_comment.attr("id");            
+            $.ajax({
+                    type : "POST",
+                    url : "/delete_comment",
+                    data : {"comment_id": comment_id},
+                    success : function() {
+                        alert("댓글이 삭제되었습니다다.");
+                       
+                        window.location.reload();
+                        
+                    }
+
+   
+                })
+        })  
+
+        $(document).on('click', '.comment_reply', function() {
+            let $parants_comment = $(this).closest(".comment");
+            let reply = `
+                     <div class="reply_input">
+                            <textarea class="reply_textarea" placeholder="답글을 입력하세요"></textarea>
+                            <button type="submit" class="reply_submit button is-success">답글 전송</button>
+                        </div>
+                    </div>`;        
+                $parants_comment.append(reply) 
+            
+        }) 
+
+
+        // 대댓글 생성 
+        $(document).on('click', '.reply_submit', function() {
+            let $parants_comment = $(this).closest(".comment");
+            let comment_id = $parants_comment.attr("id");
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4]; 
+            let text = $(this).closest(".reply_input").find(".reply_textarea").val();
+            const accessToken = getCookie("access_token");
+            $.ajax({
+                    type : "POST",
+                    url : "/new_reply",
+                    headers: {
+                    "Authorization": `Bearer ${accessToken}`  // Authorization 헤더 추가
+                    },
+                    data : {"post_id" : post_id,"comment_id": comment_id, "text" : text},
+                    success : function() {
+                        alert("답글이 작성었습니다다.");
+                        window.location.reload();
+                        
+                    }
+
+   
+                })
+        }) 
+
+        $(document).on("click", ".reply_edit", function () {
+            let $need_edit_reply = $(this).closest(".reply"); 
+            let edit_id = $need_edit_reply.attr("id");
+            let edit_text = $need_edit_reply.find(".reply_text").text().trim();
+
+            let edited_reply = `
+                <div class="edit_reply" id="${edit_id}">
+                    <textarea class="new_text" placeholder="${edit_text}"></textarea>
+                    <div><button class ="edit_reply_save">저장</button></div>
+                </div>
+                `;
+                
+            $need_edit_reply.replaceWith(edited_reply);
+                
+        })
+
+        $(document).on('click', '.edit_reply_save', function() {
+            let $parants_comment = $(this).closest(".comment");
+            let comment_id = $parants_comment.attr("id");
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4]; 
+            let edit_reply = $(this).closest(".edit_reply");
+            let reply_id = edit_reply.attr('id');
+            let edit_text = edit_reply.find(".new_text").val();
+            
+            $.ajax({
+                    type : "POST",
+                    url : "/update_reply",
+                    data : {"post_id":post_id,"comment_id": comment_id, "reply_id": reply_id, "text" : edit_text},
+                    success : function() {
+                        alert("답글이 수정정되었습니다다.");
+                        window.location.reload();
+                    }
+                })
+        })   
+
+        $(document).on('click', '.reply_delete', function() {
+            let $parants_comment = $(this).closest(".comment");
+            let comment_id = $parants_comment.attr("id");
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4];
+            let $delete_reply = $(this).closest(".reply");
+            let reply_id = $delete_reply.attr("id");            
+            $.ajax({
+                    type : "POST",
+                    url : "/delete_reply",
+                    data : {"post_id":post_id,"comment_id": comment_id, "reply_id": reply_id},
+                    success : function() {
+                        alert("답답글이 삭제되었습니다다.");
+                       
+                        window.location.reload();
+                        
+                    }
+
+   
+                })
+        })  
+
+        // 대댓글 조회
+        function read_reply() {
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4];
+            let $parants_comment = $(this).closest(".comment");
+            let comment_id = $parants_comment.attr("id");
+            $.ajax({
+                url: '/read_replies/' + post_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    for (let i = 0; i < response.response.length; i++) {
+                        let reply = response.response[i];
+                        if (reply.status === 'valid') {
+                            make_comment(reply._id, reply.text, reply.created_at, reply.updated_at);
+                            if (Array.isArray(comment.replies) && comment.replies.status === "valid") {
+                                make_reply(comment._id, comment.replies._id, comment.replies.text, comment.replies.created_at, comment.replies.updated_at, comment.replies.user_name);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function make_reply(C_id, R_id, R_text, R_created_at, R_updated_at, user_name) {
+            let div_reply = `
+                <div class = "reply" id="${R_id}">
+                    <p class="reply_text">${R_text}</p>
+                    <p class="reply_created_at">작성일: ${R_created_at}</p>
+                    <div> 
+                        <button type="button" class="reply_edit">수정</button>
+                        <button type="button" class="reply_delete">삭제</button>
+                        <p class="user_name">유저: ${user_name}</p>
+                        
+                    </div>
+                </div>`;
+            let parentDiv = document.getElementById(C_id);
+            if (parentDiv) {
+                parentDiv.innerHTML += div_reply;
+            }
+        }
+        
+
+        function read_comment() {
+            let params = window.location.href;  // 현재 URL을 가져옴
+            let post_id = params.split("/")[4];
+            $.ajax({
+                url: '/read_comment/' + post_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    for (let i = 0; i < response.response.length; i++) {
+                        let comment = response.response[i];
+                        if (comment.status === 'valid') {
+                            make_comment(comment._id, comment.text, comment.created_at, comment.updated_at, comment.participantId);
+                            if (Array.isArray(comment.replies) && comment.replies.status === "valid") {
+                                console.log(1)
+                                make_reply(comment._id, comment.replies._id, comment.replies.text, comment.replies.created_at, comment.replies.updated_at, comment.replies.user_name);
+                            }
+                        }
+                            if (Array.isArray(comment.replies)) {
+                                comment.replies.forEach(reply => {
+                                    if (reply.status === 'valid') {
+                                        console.log(2)
+                                        make_reply(comment._id, reply._id, reply.text, reply.created_at, reply.updated_at, reply.user_name);
+                                    }
+                                });
+                    }}
+                }
+            });
+        }
+        // $(document).on('click', '.comment_reply', function() {
+        //     // 클릭한 댓글의 대댓글 입력창을 찾음
+        //     var replyInput = $(this).siblings('.reply_input');
+
+        //     // 다른 모든 대댓글 입력창 숨기기
+        //     $('.reply_input').not(replyInput).css("display", "none");
+
+        //     // 해당 대댓글 입력창 보이기 또는 숨기기
+        //     if (replyInput.css("display") === "none") {
+        //         replyInput.show();  // 보이기
+        //     } else {
+        //         replyInput.hide();  // 숨기기
+        //     }})
+            
+
+        function make_comment(C_id, C_text, C_created_at, C_updated_at, participantId) {
+            if ( C_updated_at === 0){
+                let div_comment = `
+                    <div class = "comment" id="${C_id}">
+                        <p class="comment_text">${C_text}</p>
+                        <p class="comment_created_at">작성일: ${C_created_at}</p>
+                        <div>
+                            <button type="button" class="comment_reply">답글 달기</button>
+                            <button type="button" class="comment_edit">수정</button>
+                            <button type="button" class="comment_delete">삭제</button>
+                            <p class="comment_text">${participantId}</p>
+                        </div>
+                    </div>
+                       `;
+                $("#comments_list").append(div_comment);
+            }
+            else{
+                let div_comment = `
+                    <div class = "comment" id="${C_id}">
+                        <p class="comment_text">${C_text}</p>
+                        <p class="comment_updated_at">최근 수정일: ${C_updated_at}</p>
+                        <div>
+                            <button type="button" class="comment_reply">답글 달기</button>
+                            <button type="button" class="comment_edit">수정</button>
+                            <button type="button" class="comment_delete">삭제</button>
+                        </div>
+                    </div>`;
+                $("#comments_list").append(div_comment);
+                }
+
+            
+           
+        
+        }
+
+
+        function getCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+
+
+        
+
+    </script>
+</body>
+</html>
