@@ -379,7 +379,121 @@
                 
             })
 
+        /////////////////////
 
+
+
+         // 수정된 HTML 생성
+         $(document).on("click", "#edit", function () {
+    let $need_edit_post = $(this).closest(".info");
+
+    if ($need_edit_post.length === 0) {
+        console.error("편집할 게시글을 찾을 수 없습니다.");
+        return;
+    }
+
+    let update_board = $('#board').text();
+    let update_name = $('#name').text();
+    let update_link = $('#link').text();
+    let update_price = $('#price').text();
+    let update_deadline = $('#deadline').text();
+    let update_shipping = $('#shipping').text();
+    let update_condition = $('#condition').text();
+    let update_category = $('#category').text();
+    let update_quantity = $('#quantity').text();
+
+    // 수정된 HTML 생성 (input으로 변경)
+    let edit_post = `
+    <div class="info">
+        <div>
+            <span><input class="board" value="${update_board}" oninput="this.dataset.modified = 'true'" data-original="${update_board}" /></span>
+        </div>
+        <div>
+            <ol>
+                <ul><span>상품명: </span><input class="name" value="${update_name}" oninput="this.dataset.modified = 'true'" data-original="${update_name}" /></ul>
+                <ul><span>링크: </span><input class="link" value="${update_link}" oninput="this.dataset.modified = 'true'" data-original="${update_link}" /></ul>
+                <ul><span>가격: </span><input class="price" value="${update_price}" oninput="this.dataset.modified = 'true'" data-original="${update_price}" /></ul>
+                <ul><span>마감일: </span><input class="deadline" value="${update_deadline}" oninput="this.dataset.modified = 'true'" data-original="${update_deadline}" /></ul>
+                <ul><span>배송비: </span><input class="shipping" value="${update_shipping}" oninput="this.dataset.modified = 'true'" data-original="${update_shipping}" /></ul>
+                <ul><span>배송비 무료 조건:</span><input class="condition" value="${update_condition}" oninput="this.dataset.modified = 'true'" data-original="${update_condition}" /></ul>
+                <ul><span>카테고리: </span><input class="category" value="${update_category}" oninput="this.dataset.modified = 'true'" data-original="${update_category}" /></ul>
+            </ol>
+        </div>
+        <button id="edited" class="button is-info">수정 완료</button>
+    </div>
+    `;
+
+    $need_edit_post.replaceWith(edit_post); 
+});
+
+$(document).on('click', '#edited', function() {
+    let $edited_post = $(this).closest(".info");
+
+    // $edited_post가 잘 선택되었는지 확인
+    if ($edited_post.length === 0) {
+        console.error("수정된 게시글을 찾을 수 없습니다.");
+        return;
+    }
+
+    let params = window.location.href;  // 현재 URL을 가져옴
+    let post_id = params.split("/")[4];
+
+    // .val()을 사용하여 각 input에서 값을 가져옴
+    let update_board = $edited_post.find(".board").val().trim();
+    let update_name = $edited_post.find(".name").val().trim();
+    let update_link = $edited_post.find(".link").val().trim();
+    let update_price = $edited_post.find(".price").val().trim();
+    let update_deadline = $edited_post.find(".deadline").val().trim();
+    let update_shipping = $edited_post.find(".shipping").val().trim();
+    let update_condition = $edited_post.find('.condition').val().trim();
+    let update_category = $edited_post.find('.category').val().trim();
+   
+
+    $.ajax({
+        type: "POST",
+        url: "/update_post",
+        data: {
+            "post_id": post_id, 
+            "update_boards": update_board,
+            "update_name": update_name,
+            "update_link": update_link,
+            "update_price": update_price,
+            "update_deadline": update_deadline,
+            "update_shipping": update_shipping,
+            "update_condition": update_condition,
+            "update_category": update_category,
+        },
+        success: function() {
+            alert("게시글이 수정되었습니다.");
+            window.location.reload();
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX 요청 실패:", error);
+            alert("서버 오류가 발생했습니다.");
+        }
+    });
+});
+
+document.addEventListener("click", function(event) {
+    if (event.target.id === "edited") {
+        let inputs = document.querySelectorAll(".info input");
+        let updatedData = {};
+        inputs.forEach(input => {
+            updatedData[input.className] = input.dataset.modified ? input.value : input.dataset.original;
+        });
+        console.log("최종 저장 데이터:", updatedData);
+        // 이 데이터를 서버로 전송하는 로직 추가 가능
+    }
+});
+
+
+
+
+
+
+
+
+        ////////////////////
         function new_comment() {
             let params = window.location.href;  // 현재 URL을 가져옴
             let post_id = params.split("/")[4];

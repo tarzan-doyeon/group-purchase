@@ -12,6 +12,7 @@ import threading
 app = Flask(__name__)
 
 
+
 client = MongoClient('localhost', 27017)
 db = client.boards
 users_collection = db.users
@@ -134,7 +135,7 @@ def getAllProducts():
     formatted_products = [
         {   
             "id": str(product["_id"]),
-            "title": product["name"],  # 'name' 필드를 'title'로 변경
+            "title": product["board"],  # 'name' 필드를 'title'로 변경
             "price": f"{product['price']}원",  # 가격에 "원" 추가
             "deadline": product["deadline"],  # 날짜 형식 그대로 사용
             "category": product["category"],
@@ -155,7 +156,7 @@ def createProduct():
     userId = decode_token()
     print("!!!!!!here!!!!!!!", userId)
     if not userId:
-       return jsonify({'error': 'Invalid or missing token'}), 401
+        return jsonify({'error': 'Invalid or missing token'}), 401
 
 
     board = request.form['title']
@@ -561,6 +562,37 @@ def buy_product(id):
         return jsonify({"result": "success", "message": "구매에 참여했습니다!!!"})
     else:
         return jsonify({"result": "fail", "message": "오류 발생으로 재시도 바랍니다."})
+
+@app.route('/update_post', methods=['POST']) 
+def Update_post():
+    post_id = ObjectId(request.form['post_id']) 
+    update_boards = request.form['update_boards']
+    update_name = request.form['update_name']
+    update_link = request.form['update_link']
+    update_price = request.form['update_price']
+    update_deadline = request.form['update_deadline']
+    update_shipping = request.form['update_shipping']
+    update_condition = request.form['update_condition']
+    update_category = request.form['update_category']
+    result = db.boards.update_one(
+        {"_id": post_id},
+        {"$set": {
+            "board": update_boards,
+            "name": update_name,
+            "link": update_link,
+            "price": update_price ,
+            "deadline": update_deadline,
+            "shipping": update_shipping,
+            "condition": update_condition,
+            "category": update_category }}
+    )
+    if result.modified_count > 0:
+        return jsonify({"result": "success", "message": "수정되었습니다다!!!"})
+    else:
+        return jsonify({"result": "fail", "message": "오류 발생으로 재시도 바랍니다."})
+
+
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5001, debug=True)
